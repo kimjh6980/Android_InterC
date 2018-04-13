@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="BusList">
+        <item>[버스 선택]</item>
+        <item>1번 버스</item>
+        <item>2번 버스</item>
+    </string-array>
+</resources>
