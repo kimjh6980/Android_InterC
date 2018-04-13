@@ -17,4 +17,19 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), BusLoaction.class);
         startActivity(intent);
     }
+
+    public void B_School_Food(View v)  {
+        Intent intent = new Intent(getApplicationContext(), SchoolFood.class);
+        startActivity(intent);
+    }
+
+    public void B_Clc(View v)  {
+        Intent intent = new Intent(getApplicationContext(), ClcWeb.class);
+        startActivity(intent);
+    }
+
+    public void B_Calendar(View v)  {
+        Intent intent = new Intent(getApplicationContext(), Schedule_Calendar.class);
+        startActivity(intent);
+    }
 }

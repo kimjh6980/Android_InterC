@@ -18,18 +18,21 @@
         android:id="@+id/B_food"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="B_School_Food"
         android:text="학식 메뉴" />
 
     <Button
         android:id="@+id/B_calendar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="B_Calendar"
         android:text="캘린더" />
 
     <Button
         android:id="@+id/B_web"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="B_Clc"
         android:text="모바일웹" />
 
     <Button

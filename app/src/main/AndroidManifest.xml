@@ -42,7 +42,14 @@
 
         <activity
             android:name=".BusLoaction"
-            android:label="@string/title_activity_bus_loaction"></activity>
+            android:label="@string/title_activity_bus_loaction" />
+        <activity
+            android:name=".SchoolFood"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name=".ClcWeb"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity android:name=".Schedule_Calendar"></activity>
     </application>
 
 </manifest>
