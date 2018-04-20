@@ -75,11 +75,11 @@ public class Schedule_Calendar extends AppCompatActivity{
 
         SimpleDateFormat year_Form = new SimpleDateFormat("yyyy", Locale.KOREA);
         SimpleDateFormat month_Form = new SimpleDateFormat("mm", Locale.KOREA);
-
+/*
         String year = String.format("%04d", year_Form.format(date));
         String month = String.format("%02d", month_Form.format(date));
         Bus_Location_receive_Asycn(year, month);
-
+*/
         String[] result = {"2017,03,18","2017,04,18","2017,05,18","2017,06,18"};
 
         new ApiSimulator(result).executeOnExecutor(Executors.newSingleThreadExecutor());
@@ -117,11 +117,10 @@ public class Schedule_Calendar extends AppCompatActivity{
                 Bus_Location_receive_Asycn(Year, Month);
             }
         });
+
     }
 
     private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
-
-
 
         String[] Time_Result;
 
@@ -154,16 +153,14 @@ public class Schedule_Calendar extends AppCompatActivity{
                 calendar.set(year,month-1,dayy);
             }
 
-            /* 한달전의 2달전으로부터 5일 간격으로 30개
-            Calendar calendar = Calendar.getInstance();
+            //---- 특정날 잡아서 포인트 띄워주는거
+            calendar = Calendar.getInstance();
             calendar.add(Calendar.MONTH, -2);
-            ArrayList<CalendarDay> dates = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
                 CalendarDay day = CalendarDay.from(calendar);
                 dates.add(day);
                 calendar.add(Calendar.DATE, 5);
             }
-            */
 
             return dates;
         }
@@ -180,6 +177,7 @@ public class Schedule_Calendar extends AppCompatActivity{
         }
     }
 
+    //------------OKHttp -> 일정받아오기
     public final String url = "http://api.udp.cc/libs/getCalendar.php";
 
     OkHttpClient client = new OkHttpClient();
