@@ -58,6 +58,8 @@ public class BusLoaction extends FragmentActivity implements OnMapReadyCallback 
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        final TextView Bus_Selected = (TextView)findViewById(R.id.Bus_Selected);
+        final Spinner Bus_Spinner = (Spinner) findViewById(R.id.Bus_spinner);
         final Button BusSearch = (Button) findViewById(R.id.Bus_Search);
         BusTimeText = (TextView) findViewById(R.id.BusTime);
 
@@ -85,16 +87,31 @@ public class BusLoaction extends FragmentActivity implements OnMapReadyCallback 
             public void onClick(View v) {
                 if (BusSearch.getText().equals("START")) {
                     if(Sel_Bus_num == 0)    {
-                        AlertDialog.Builder alert = new AlertDialog.Builder(getApplication());
-                        alert.setTitle("Error");
-                        alert.setMessage("버스를 선택해 주세요");
-                        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        new Thread(new Runnable() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                            public void run() {
+                                runOnUiThread(new Runnable(){
+                                    @Override
+                                    public void run() {
+                                        Log.e("adapter" ,"RUN");
+                                        AlertDialog.Builder alert = new AlertDialog.Builder(BusLoaction.this);
+                                        alert.setTitle("Error");
+                                        alert.setMessage("버스를 선택해 주세요");
+                                        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                            }
+                                        });
+                                        alert.show();
+                                    }
+                                });
                             }
-                        });
-                        alert.show();
+                        }).start();
+
                     }   else    {
+                        Bus_Selected.setText(Sel_Bus_num + "번 버스");
+                        Bus_Selected.setVisibility(View.VISIBLE);
+                        Bus_Spinner.setVisibility(View.GONE);
                         timer = new Timer();
                         timer.schedule(new TimerTask() {
                             @Override
@@ -106,6 +123,9 @@ public class BusLoaction extends FragmentActivity implements OnMapReadyCallback 
                         BusSearch.setText("Searching...");
                     }
                 }else{
+                    Bus_Selected.setVisibility(View.GONE);
+                    Bus_Spinner.setVisibility(View.VISIBLE);
+                    BusTimeText.setText("BUS TIME");
                     timer.cancel();
                     timer = null;
                     BusSearch.setText("START");
@@ -207,7 +227,7 @@ public class BusLoaction extends FragmentActivity implements OnMapReadyCallback 
                                 LatLng NowLocation = new LatLng(lat, lon);
                                 mMap.addMarker(new MarkerOptions().position(NowLocation));
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(NowLocation));
-                                mMap.animateCamera(CameraUpdateFactory.zoomTo(8));
+                                mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
                             }
                         });
 /*

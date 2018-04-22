@@ -10,6 +10,8 @@
 
         android:width="5px"
 
-        android:color="#a9dbf0cb" />
+        android:color="#ff5a65"
+        />
+        <!--android:color="#a9dbf0cb" -->
 
 </shape>

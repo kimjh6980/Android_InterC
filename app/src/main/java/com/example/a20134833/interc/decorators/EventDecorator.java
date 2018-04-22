@@ -1,6 +1,7 @@
 package com.example.a20134833.interc.decorators;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -38,6 +39,6 @@ public class EventDecorator implements DayViewDecorator {
     @Override
     public void decorate(DayViewFacade view) {
         view.setSelectionDrawable(drawable);
-        view.addSpan(new DotSpan(5, color)); // 날자밑에 점
+        view.addSpan(new DotSpan(5, Color.RED)); // 날자밑에 점
     }
 }

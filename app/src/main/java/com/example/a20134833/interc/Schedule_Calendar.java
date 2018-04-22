@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.a20134833.interc.decorators.EventDecorator;
@@ -55,10 +57,23 @@ public class Schedule_Calendar extends AppCompatActivity{
     //String[] array_result = {"2018/03/18","2018/04/18","2018/05/18","2018/06/18"};
     String[] array_result = {};
 
+    ArrayList<String> items;
+    ArrayAdapter adapter;
+    ListView listview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        // 빈 데이터 리스트 생성.
+        items = new ArrayList<String>() ;
+        // ArrayAdapter 생성. 아이템 View를 선택(single choice)가능하도록 만듦.
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items) ;
+
+        // listview 생성 및 adapter 지정.
+        listview = (ListView) findViewById(R.id.Event_ListView) ;
+        listview.setAdapter(adapter) ;
 
         materialCalendarView = (MaterialCalendarView)findViewById(R.id.calendarView);
 
@@ -92,20 +107,19 @@ public class Schedule_Calendar extends AppCompatActivity{
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+
                 int Year = date.getYear();
                 int Month = date.getMonth() + 1;
                 int Day = date.getDay();
 
-                Log.i("Year test", Year + "");
-                Log.i("Month test", Month + "");
-                Log.i("Day test", Day + "");
-
-                String shot_Day = Year + "," + Month + "," + Day;
+                String S_M = String.format("%02d", Month);
+                String S_D = String.format("%02d", Day);
+                String shot_Day = Year + "." + S_M + "." + S_D;
 
                 Log.i("shot_Day test", shot_Day + "");
-                materialCalendarView.clearSelection();
 
-                Toast.makeText(getApplicationContext(), shot_Day , Toast.LENGTH_SHORT).show();
+                SearchingEvent(shot_Day);
+                materialCalendarView.clearSelection();
             }
         });
 
@@ -122,7 +136,21 @@ public class Schedule_Calendar extends AppCompatActivity{
                 Bus_Location_receive_Asycn(Year, Month);
             }
         });
+    }
 
+    public void SearchingEvent(String day)  {
+        for(int i = 0;i < items.size(); i++)
+        {
+            // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
+            if (items.get(i).toString().contains(day))
+            {
+                // 검색된 데이터를 리스트에 추가한다.
+                String[] date = items.get(i).split("-");
+                String eventname = date[1];
+
+                Toast.makeText(getApplicationContext(), day +"\n"+eventname, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
@@ -164,19 +192,7 @@ public class Schedule_Calendar extends AppCompatActivity{
             CalendarDay day = CalendarDay.from(calendar);
             dates.add(day);
             calendar.set(2018, 01,01);
-/*
-            //---- 특정날 잡아서 포인트 띄워주는거
-            calendar = Calendar.getInstance();
-            calendar.add(Calendar.MONTH, -2);
-            for (int i = 0; i < 30; i++) {
-                CalendarDay day = CalendarDay.from(calendar);
-                dates.add(day);
-                calendar.add(Calendar.DATE, 5);
-            }
-*/
-/*
-            dates.add(day);
-            calendar.set(2018, 03, 01);*/
+
             return dates;
         }
 
@@ -221,13 +237,19 @@ public class Schedule_Calendar extends AppCompatActivity{
             protected void onPreExecute() {
                 Log.e("Receive_", "pre");
 
+                items.clear();
+                // listview 선택 초기화.
+                listview.clearChoices();
+                // listview 갱신.
+                adapter.notifyDataSetChanged();
+
                 super.onPreExecute();
             }
 
             @Override
             protected void onPostExecute(String result) {
-                Log.e("Receive_", "post");
 
+                Log.e("Receive_", "post");
             }
         }).execute();
 
@@ -258,6 +280,8 @@ public class Schedule_Calendar extends AppCompatActivity{
                 @Override
                 public void onResponse(Call call, Response response) {
                     try {
+                        int EventConut = 1;
+
                         responseBody = response.body().string();
 
                         JSONObject jsonObject = new JSONObject(responseBody);
@@ -278,6 +302,8 @@ public class Schedule_Calendar extends AppCompatActivity{
 
                             if(lat.contains(SetMonth))    {
                                 Log.e("JsonArray_C - " + i, "Data = " + time + "/" + lat + "/" + lon);
+                                items.add(EventConut + " / " +lat + " ~ " + lon + " \n " + "-  " + time);
+                                EventConut++;
                                 array.add(lat);
                             }
                         }
@@ -297,6 +323,18 @@ public class Schedule_Calendar extends AppCompatActivity{
                         }
 
                         if(array_result != null)    {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    runOnUiThread(new Runnable(){
+                                        @Override
+                                        public void run() {
+                                            Log.e("adapter" ,"RUN");
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    });
+                                }
+                            }).start();
                             new ApiSimulator(array_result).executeOnExecutor(Executors.newSingleThreadExecutor());
                         }   else    {
                             Toast.makeText(Schedule_Calendar.this, "행사가 없습니다.", Toast.LENGTH_SHORT).show();
