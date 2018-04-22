@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Android_InterC.iml" filepath="$PROJECT_DIR$/Android_InterC.iml" />
+      <module fileurl="file://C:\Users\20134833\Desktop\Now Develop\InterC\Android_InterC.iml" filepath="C:\Users\20134833\Desktop\Now Develop\InterC\Android_InterC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/InterC.iml" filepath="$PROJECT_DIR$/InterC.iml" />
       <module fileurl="file://C:\Users\Jin Hyuk Kim\Desktop\Now Develop\Android_InterC\Android_InterC\InterC.iml" filepath="C:\Users\Jin Hyuk Kim\Desktop\Now Develop\Android_InterC\Android_InterC\InterC.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://C:\Users\Jin Hyuk Kim\Desktop\Now Develop\Android_InterC\Android_InterC\app\app.iml" filepath="C:\Users\Jin Hyuk Kim\Desktop\Now Develop\Android_InterC\Android_InterC\app\app.iml" />

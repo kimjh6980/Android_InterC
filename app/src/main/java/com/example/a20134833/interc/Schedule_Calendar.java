@@ -51,6 +51,10 @@ public class Schedule_Calendar extends AppCompatActivity{
     Cursor cursor;
     MaterialCalendarView materialCalendarView;
 
+    List<String> array = new ArrayList<String>();
+    //String[] array_result = {"2018/03/18","2018/04/18","2018/05/18","2018/06/18"};
+    String[] array_result = {};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,9 +84,10 @@ public class Schedule_Calendar extends AppCompatActivity{
         String month = String.format("%02d", month_Form.format(date));
         Bus_Location_receive_Asycn(year, month);
 */
-        String[] result = {"2017,03,18","2017,04,18","2017,05,18","2017,06,18"};
+        //String[] result = {"2017,03,18","2017,04,18","2017,05,18","2017,06,18"};
 
-        new ApiSimulator(result).executeOnExecutor(Executors.newSingleThreadExecutor());
+
+        new ApiSimulator(array_result).executeOnExecutor(Executors.newSingleThreadExecutor());
 
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
@@ -130,29 +135,36 @@ public class Schedule_Calendar extends AppCompatActivity{
 
         @Override
         protected List<CalendarDay> doInBackground(@NonNull Void... voids) {
+            Log.e("cal", "back");
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             java.util.Calendar calendar = java.util.Calendar.getInstance();
             ArrayList<CalendarDay> dates = new ArrayList<>();
 
             //특정날짜 달력에 점표시해주는곳
             //월은 0이 1월 년,일은 그대로
             //string 문자열인 Time_Result 을 받아와서 ,를 기준으로짜르고 string을 int 로 변환
+
             for(int i = 0 ; i < Time_Result.length ; i ++){
-                CalendarDay day = CalendarDay.from(calendar);
-                String[] time = Time_Result[i].split(",");
+                //String[] time = Time_Result[i].split("/");
+                String[] time = Time_Result[i].split("\\.");
+                Log.e("TimeResult " + i, " = " + time[0] +"/"+time[1]+"/"+time[2]);
                 int year = Integer.parseInt(time[0]);
                 int month = Integer.parseInt(time[1]);
                 int dayy = Integer.parseInt(time[2]);
-
+                CalendarDay day = CalendarDay.from(calendar);
                 dates.add(day);
                 calendar.set(year,month-1,dayy);
             }
 
+            // 뒤에 하나가 안떠서 억지로 추가해준거
+            CalendarDay day = CalendarDay.from(calendar);
+            dates.add(day);
+            calendar.set(2018, 01,01);
+/*
             //---- 특정날 잡아서 포인트 띄워주는거
             calendar = Calendar.getInstance();
             calendar.add(Calendar.MONTH, -2);
@@ -161,18 +173,29 @@ public class Schedule_Calendar extends AppCompatActivity{
                 dates.add(day);
                 calendar.add(Calendar.DATE, 5);
             }
-
+*/
+/*
+            dates.add(day);
+            calendar.set(2018, 03, 01);*/
             return dates;
         }
 
         @Override
-        protected void onPostExecute(@NonNull List<CalendarDay> calendarDays) {
-            super.onPostExecute(calendarDays);
+        protected void onPreExecute() {
+            Log.e("cal_", "pre");
+            super.onPreExecute();
+        }
 
+        @Override
+        protected void onPostExecute(@NonNull List<CalendarDay> calendarDays) {
+            Log.e("cal", "post");
+
+            super.onPostExecute(calendarDays);
+/*
             if (isFinishing()) {
                 return;
             }
-
+*/
             materialCalendarView.addDecorator(new EventDecorator(Color.GREEN, calendarDays,Schedule_Calendar.this));
         }
     }
@@ -196,11 +219,15 @@ public class Schedule_Calendar extends AppCompatActivity{
 
             @Override
             protected void onPreExecute() {
+                Log.e("Receive_", "pre");
+
                 super.onPreExecute();
             }
 
             @Override
             protected void onPostExecute(String result) {
+                Log.e("Receive_", "post");
+
             }
         }).execute();
 
@@ -210,6 +237,7 @@ public class Schedule_Calendar extends AppCompatActivity{
     public class ConnectServer {//Client 생성
 
         public int requestPost(String url,final String year,final String month) {
+            array.clear();
 
             //Request Body에 서버에 보낼 데이터 작성
             final RequestBody requestBody = new FormBody.Builder()
@@ -250,6 +278,7 @@ public class Schedule_Calendar extends AppCompatActivity{
 
                             if(lat.contains(SetMonth))    {
                                 Log.e("JsonArray_C - " + i, "Data = " + time + "/" + lat + "/" + lon);
+                                array.add(lat);
                             }
                         }
                         /*
@@ -261,6 +290,18 @@ public class Schedule_Calendar extends AppCompatActivity{
                         }.start();
 */
 //                        ShownowLocation(lat, lon);
+
+                        array_result = array.toArray(new String[array.size()]);
+                        for(int i=0; i<array_result.length; i++)    {
+                            Log.e("Array result " + i, "=" + array_result[i]);
+                        }
+
+                        if(array_result != null)    {
+                            new ApiSimulator(array_result).executeOnExecutor(Executors.newSingleThreadExecutor());
+                        }   else    {
+                            Toast.makeText(Schedule_Calendar.this, "행사가 없습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                        //new ApiSimulator(array_result).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                     } catch (IOException e) {
                         e.printStackTrace();
