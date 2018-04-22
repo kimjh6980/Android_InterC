@@ -1,5 +1,6 @@
 package com.example.a20134833.interc;
 
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -61,6 +62,8 @@ public class Schedule_Calendar extends AppCompatActivity{
     ArrayAdapter adapter;
     ListView listview;
 
+    ProgressDialog asyncDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +77,8 @@ public class Schedule_Calendar extends AppCompatActivity{
         // listview 생성 및 adapter 지정.
         listview = (ListView) findViewById(R.id.Event_ListView) ;
         listview.setAdapter(adapter) ;
+
+        asyncDialog = new ProgressDialog(Schedule_Calendar.this);
 
         materialCalendarView = (MaterialCalendarView)findViewById(R.id.calendarView);
 
@@ -101,8 +106,8 @@ public class Schedule_Calendar extends AppCompatActivity{
 */
         //String[] result = {"2017,03,18","2017,04,18","2017,05,18","2017,06,18"};
 
-
-        new ApiSimulator(array_result).executeOnExecutor(Executors.newSingleThreadExecutor());
+        Bus_Location_receive_Asycn("2018","04");
+        //new ApiSimulator(array_result).executeOnExecutor(Executors.newSingleThreadExecutor());
 
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
@@ -213,6 +218,8 @@ public class Schedule_Calendar extends AppCompatActivity{
             }
 */
             materialCalendarView.addDecorator(new EventDecorator(Color.GREEN, calendarDays,Schedule_Calendar.this));
+
+            asyncDialog.dismiss();
         }
     }
 
@@ -222,6 +229,8 @@ public class Schedule_Calendar extends AppCompatActivity{
     OkHttpClient client = new OkHttpClient();
 
     String responseBody = null;
+
+
 
     public void Bus_Location_receive_Asycn(final String year,final String month) {
         (new AsyncTask<MainActivity, Void, String>() {
@@ -236,6 +245,10 @@ public class Schedule_Calendar extends AppCompatActivity{
             @Override
             protected void onPreExecute() {
                 Log.e("Receive_", "pre");
+
+                asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                asyncDialog.setMessage("로딩중입니다..");
+                asyncDialog.show();
 
                 items.clear();
                 // listview 선택 초기화.
