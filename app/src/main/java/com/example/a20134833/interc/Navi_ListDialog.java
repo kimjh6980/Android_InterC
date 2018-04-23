@@ -54,7 +54,7 @@ public class Navi_ListDialog {
                 String strText = (String) parent.getItemAtPosition(position) ;
                 main_label.setText(strText);
                 Log.e("OnItemClicked", String.valueOf(position));
-                navigation.setDate(position+1);
+                navigation.setDate(position);
                 dlg.dismiss();
                 // TODO : use strText
             }

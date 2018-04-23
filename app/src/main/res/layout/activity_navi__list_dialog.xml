@@ -8,16 +8,11 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:background="@color/colorAccent"
         android:gravity="center"
+        android:text="조선대학교 위치 선택"
         android:textColor="#ffffff"
-        android:textSize="16dp"
-        android:text="커스텀 다이얼로그"
-        android:background="@color/colorAccent"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#000000"/>
+        android:textSize="16dp" />
 
     <ListView
         android:id="@+id/Dialog_ListView"
@@ -25,13 +20,4 @@
         android:layout_height="match_parent"
         android:scrollbars="horizontal" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#000000"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#000000"/>
 </LinearLayout>
