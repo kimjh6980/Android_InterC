@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">InterC</string>
     <string name="title_activity_bus_loaction">Map</string>
+    <string name="TmapKey">6d518d6e-411a-45a7-a1dc-6e991ac0fcd8</string>
 </resources>

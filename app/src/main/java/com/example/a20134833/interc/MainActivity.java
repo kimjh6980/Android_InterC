@@ -32,4 +32,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), Schedule_Calendar.class);
         startActivity(intent);
     }
+
+    public void B_Navi(View v)  {
+        Intent intent = new Intent(getApplicationContext(), Navigation.class);
+        startActivity(intent);
+    }
 }

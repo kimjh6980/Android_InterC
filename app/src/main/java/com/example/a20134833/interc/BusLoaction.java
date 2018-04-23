@@ -252,22 +252,11 @@ public class BusLoaction extends FragmentActivity implements OnMapReadyCallback 
             return 0;
         }
     }
-/*
-    final Handler mhandler = new Handler() {
-        public void handleMessage(Message msg) {
-            BusTimeText.setText(time);
-        }
-    };
 
-    // 위치받기 통신 결과
-    private void ShownowLocation(String time, Double lat, Double lon) {
-        Log.e("ShowLocation", "Connect!!!");
-
-        mMap.clear();
-        LatLng NowLocation = new LatLng(lat, lon);
-        mMap.addMarker(new MarkerOptions().position(NowLocation));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(NowLocation));
-
+    @Override
+    public void onBackPressed() {
+        timer.cancel();
+        timer = null;
+        super.onBackPressed();
     }
-*/
 }

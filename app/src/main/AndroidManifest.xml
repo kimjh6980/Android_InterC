@@ -49,7 +49,10 @@
         <activity
             android:name=".ClcWeb"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <activity android:name=".Schedule_Calendar"></activity>
+        <activity android:name=".Schedule_Calendar" />
+        <activity android:name=".Navigation" />
+        <activity android:name=".Navi_List_Dialog" />
+        <activity android:name=".Navi_ListDialog"></activity>
     </application>
 
 </manifest>
