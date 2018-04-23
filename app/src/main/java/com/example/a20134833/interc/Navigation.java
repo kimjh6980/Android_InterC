@@ -1,16 +1,22 @@
 package com.example.a20134833.interc;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,20 +30,25 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.internal.service.Common;
 import com.skt.Tmap.TMapData;
+import com.skt.Tmap.TMapGpsManager;
 import com.skt.Tmap.TMapMarkerItem;
 import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapPolyLine;
 import com.skt.Tmap.TMapView;
 import android.content.res.Resources;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.logging.LogManager;
 
-public class Navigation extends AppCompatActivity{
+public class Navigation extends AppCompatActivity implements TMapGpsManager.onLocationChangedCallback {
 
     public static double set_lat;
     public static double set_lon;
+    public static double now_lat;
+    public static double now_lon;
     TextView setLocationTxt;
     TextView location_Select;
     public static TMapView tMapView;
@@ -65,7 +76,16 @@ public class Navigation extends AppCompatActivity{
             ,{35.145059, 126.932534}    // 보건과학대학16
             ,{35.145059, 126.932534}    // 미래사회융합대학17
             };
+
     public int set_location_num;
+    double getCurrent_long;
+    double getCurrent_lat;
+    TMapPoint Current_Point;
+    private TMapMarkerItem CurrentMarker;
+    boolean searching_Path = false;
+    public static TMapGpsManager tmapgps = null;
+
+    GpsInfo gpsinfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,13 +121,47 @@ public class Navigation extends AppCompatActivity{
             }
         });
 
+
+
         bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.poi_here);
+
+        tMapView.setIconVisibility(true);
+        tmapgps = new TMapGpsManager(Navigation.this);
+        tmapgps.setMinTime(1000);
+        tmapgps.setMinDistance(5);
+        tmapgps.setProvider(tmapgps.NETWORK_PROVIDER); //연결된 인터넷으로 현 위치를 받습니다.
+        //실내일 때 유용합니다.
+        //tmapgps.setProvider(tmapgps.GPS_PROVIDER); //gps로 현 위치를 잡습니다.
+        tmapgps.OpenGps();
+
+        /*  화면중심을 단말의 현재위치로 이동 */
+        //tMapView.setTrackingMode(true);
+        tMapView.setSightVisible(true);
+
+        setGps();
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        tMapView.setCenterPoint( 126.931933, 35.140982);
+
+        if(gpsinfo.lat == 0)    {
+            //tMapView.setCenterPoint( 35.141783, 126.928387);
+            tMapView.setCenterPoint(  126.928387, 35.141783);
+        }   else    {
+            //tMapView.setCenterPoint( gpsinfo.lat, gpsinfo.lon);
+            tMapView.setCenterPoint( gpsinfo.lon, gpsinfo.lat);
+            setTrackingMode();
+        }
+
+
+        CurrentMarker = new TMapMarkerItem();
+
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.poi_here);
+        tMapView.setIcon(bitmap);
+        tMapView.addMarkerItem("CurrentMarker", CurrentMarker);
+
+        tMapView.setIconVisibility(true);
     }
 
     public void setDate(final int position) {
@@ -134,10 +188,11 @@ public class Navigation extends AppCompatActivity{
     public void StartGuidance() {
         tMapView.removeTMapPath();
 
-        setTrackingMode();
-        Log.e("Navi", set_lat +"/"+set_lon);
 
-        TMapPoint point1 = new TMapPoint(35.141783, 126.928387);
+        Log.e("Navi", gpsinfo.lat +"/"+ gpsinfo.lon +"--"+set_lat +"/"+set_lon);
+
+        //TMapPoint point1 = new TMapPoint(35.141783, 126.928387);
+        TMapPoint point1 = new TMapPoint(now_lat, now_lon);
         //TMapPoint point2 = new TMapPoint(set_location[set_location_num][0], set_location[set_location_num][1]);
         TMapPoint point2 = new TMapPoint(set_lat, set_lon);
         Log.e("Navi", String.valueOf(set_location_num));
@@ -160,10 +215,60 @@ public class Navigation extends AppCompatActivity{
 
     public void setTrackingMode() {
         Log.e("Navi", "searchTracking");
-        tMapView.setTrackingMode(tMapView.getIsTracking());
+        tMapView.setTrackingMode(true);
     }
 
     public void StartGuidance(View view) {
+        tmapgps.OpenGps();
         StartGuidance();
+    }
+
+    private final LocationListener mLocationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                tMapView.setLocationPoint(longitude, latitude);
+                tMapView.setCenterPoint(longitude, latitude);
+
+                tMapView.setTrackingMode(true);
+                tMapView.setSightVisible(true);
+            }
+
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    };
+
+    public void setGps() {
+        final LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 위치제공자(실내에선 NETWORK_PROVIDER 권장)
+        //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, // 등록할 위치제공자(실내에선 NETWORK_PROVIDER 권장)
+                1000, // 통지사이의 최소 시간간격 (miliSecond)
+                1, // 통지사이의 최소 변경거리 (m)
+                mLocationListener);
+    }
+
+    @Override
+    public void onBackPressed() {
+        tmapgps.CloseGps();
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onLocationChange(Location location) {
+        now_lon = location.getLongitude();
+        now_lat = location.getLatitude();
     }
 }
