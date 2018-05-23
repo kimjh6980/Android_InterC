@@ -7,44 +7,106 @@
     android:orientation="vertical"
     tools:context="com.example.a20134833.interc.MainActivity">
 
-    <Button
-        android:id="@+id/B_bus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="B_Bus_Location"
-        android:text="교내버스위치추적" />
 
-    <Button
-        android:id="@+id/B_food"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="B_School_Food"
-        android:text="학식 메뉴" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/maintitle" />
 
-    <Button
-        android:id="@+id/B_calendar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="B_Calendar"
-        android:text="캘린더" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/B_web"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="B_Clc"
-        android:text="모바일웹" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/B_timetable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="시간표" />
+            <Button
+                android:id="@+id/B_calendar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/main3"
+                android:onClick="B_Calendar"
+                android:text="캘린더" />
 
-    <Button
-        android:id="@+id/B_nav"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="B_Navi"
-        android:text="네비게이션" />
+            <Button
+                android:id="@+id/B_web"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/main4"
+                android:onClick="B_Clc"
+                android:text="모바일웹" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/B_bus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/main1"
+                android:onClick="B_Bus_Location"
+                android:text="교내버스위치추적" />
+
+            <Button
+                android:id="@+id/B_food"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/main2"
+                android:onClick="B_School_Food"
+                android:text="학식 메뉴" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/B_timetable"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/main5"
+                android:text="시간표" />
+
+            <Button
+                android:id="@+id/B_nav"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/main6"
+                android:onClick="B_Navi"
+                android:text="네비게이션" />
+        </LinearLayout>
+    </LinearLayout>
+
 </LinearLayout>
