@@ -49,13 +49,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="Search_Status_Car"
+            android:background="#b9cffd"
             android:text="자동차" />
 
         <Button
-            android:id="@+id/B_Work"
+            android:id="@+id/B_Walk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="#d4d5d6"
+            android:onClick="Search_Status_Pedi"
             android:text="걷기" />
     </LinearLayout>
 

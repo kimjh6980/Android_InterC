@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
@@ -53,6 +54,8 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
     TextView location_Select;
     public static TMapView tMapView;
 
+    public static boolean search_Status = false;
+
     private Context 	mContext;
     Bitmap bitmap;
 
@@ -86,6 +89,9 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
     public static TMapGpsManager tmapgps = null;
 
     GpsInfo gpsinfo;
+
+    private Button search_Car_Btn;
+    private Button search_walk_Btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +127,8 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
             }
         });
 
-
+        search_Car_Btn = findViewById(R.id.B_Car);
+        search_walk_Btn = findViewById(R.id.B_Walk);
 
         bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.poi_here);
 
@@ -188,7 +195,6 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
     public void StartGuidance() {
         tMapView.removeTMapPath();
 
-
         Log.e("Navi", gpsinfo.lat +"/"+ gpsinfo.lon +"--"+set_lat +"/"+set_lon);
 
         //TMapPoint point1 = new TMapPoint(35.141783, 126.928387);
@@ -198,19 +204,32 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
         Log.e("Navi", String.valueOf(set_location_num));
         TMapData tmapdata = new TMapData();
 
-        tmapdata.findPathDataWithType(TMapData.TMapPathType.CAR_PATH, point1, point2, new TMapData.FindPathDataListenerCallback() {
-            @Override
-            public void onFindPathData(TMapPolyLine polyLine) {
-                polyLine.setLineColor(Color.BLUE);
-                tMapView.addTMapPath(polyLine);
-            }
-        });
+        if(!search_Status)  // false = CAR
+        {
+            tmapdata.findPathDataWithType(TMapData.TMapPathType.CAR_PATH, point1, point2, new TMapData.FindPathDataListenerCallback() {
+                @Override
+                public void onFindPathData(TMapPolyLine polyLine) {
+                    polyLine.setLineColor(Color.BLUE);
+                    tMapView.addTMapPath(polyLine);
+                }
+            });
+        }   else    {   // True = Pedestrain
+            tmapdata.findPathDataWithType(TMapData.TMapPathType.PEDESTRIAN_PATH, point1, point2, new TMapData.FindPathDataListenerCallback() {
+                @Override
+                public void onFindPathData(TMapPolyLine polyLine) {
+                    polyLine.setLineColor(Color.BLUE);
+                    tMapView.addTMapPath(polyLine);
+                }
+            });
+        }
 
         Bitmap start = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.poi_start);
         Bitmap end = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.poi_end);
         tMapView.setTMapPathIcon(start, end);
 
         tMapView.zoomToTMapPoint(point1, point2);
+        //tMapView.setZoomLevel(18);
+        tMapView.setCenterPoint(now_lat, now_lon);
     }
 
     public void setTrackingMode() {
@@ -253,8 +272,8 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
-        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 위치제공자(실내에선 NETWORK_PROVIDER 권장)
-        //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, // 등록할 위치제공자(실내에선 NETWORK_PROVIDER 권장)
+        //lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 위치제공자(실내에선 NETWORK_PROVIDER 권장)
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, // 등록할 위치제공자(실내에선 NETWORK_PROVIDER 권장)
                 1000, // 통지사이의 최소 시간간격 (miliSecond)
                 1, // 통지사이의 최소 변경거리 (m)
                 mLocationListener);
@@ -270,5 +289,18 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
     public void onLocationChange(Location location) {
         now_lon = location.getLongitude();
         now_lat = location.getLatitude();
+    }
+
+    public void Search_Status_Car(View view) {
+        search_Car_Btn.setBackgroundColor(Color.parseColor("b9cffd"));
+        search_walk_Btn.setBackgroundColor(Color.parseColor("#d4d5d6"));
+        search_Status = false;
+        Toast.makeText(getApplicationContext(), "차량 길찾기로 설정되었습니다.", Toast.LENGTH_SHORT).show();
+    }
+    public void Search_Status_Pedi(View view) {
+        search_walk_Btn.setBackgroundColor(Color.parseColor("#b9cffd"));
+        search_Car_Btn.setBackgroundColor(Color.parseColor("#d4d5d6"));
+        search_Status = true;
+        Toast.makeText(getApplicationContext(), "도보 길찾기로 설정되었습니다.", Toast.LENGTH_SHORT).show();
     }
 }
