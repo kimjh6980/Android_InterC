@@ -96,6 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/main5"
+                android:onClick="B_class"
                 android:text="시간표" />
 
             <Button

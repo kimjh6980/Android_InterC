@@ -37,4 +37,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), Navigation.class);
         startActivity(intent);
     }
+
+    public void B_class(View view) {
+        Intent intent = new Intent(getApplicationContext(), Class.class);
+        startActivity(intent);
+    }
 }
