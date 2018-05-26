@@ -60,7 +60,7 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
     Bitmap bitmap;
 
     String[] set_location_name = {"본관4층","자연과학관 1층","법과대학 1층","사회과학 사범대학 1층","경상대학 1층","공과대학 1공학관 2층", "IT융합대학 1층", "사회과학 사범대학 3층","본관 4층", "체육대학 3층","의과대학 1호관 2층","치과대학 2층","약학대학 3호관 1층","미술대학 3층","본관 2층","서석홀 3층","서석홀 1층"};
-    double[][] set_location =
+    double[][] set_location =   // 수동으로 준 각 단과별 위도 및 경도
             {{35.142708, 126.934776}    // 인문과학대학1
             ,{35.139393, 126.928306}    // 자연과학대학2
             ,{35.139356, 126.935120}    // 법과대학3
@@ -81,11 +81,7 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
             };
 
     public int set_location_num;
-    double getCurrent_long;
-    double getCurrent_lat;
-    TMapPoint Current_Point;
     private TMapMarkerItem CurrentMarker;
-    boolean searching_Path = false;
     public static TMapGpsManager tmapgps = null;
 
     GpsInfo gpsinfo;
@@ -104,9 +100,7 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
         mContext = this;
         LinearLayout linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
         tMapView = new TMapView(getApplicationContext());
-
-        //tMapView.setSKTMapApiKey( "38c7269d-5eb5-4739-b305-9886986b658f" );
-        tMapView.setSKTMapApiKey("fadb9bf5-6142-43d6-8b0b-2dc5b86fff4d");
+        tMapView.setSKTMapApiKey("fadb9bf5-6142-43d6-8b0b-2dc5b86fff4d");   // Tmap Developer 인증Key Value
         tMapView.setZoomLevel(15);
 
         linearLayoutTmap.addView(tMapView);
@@ -136,13 +130,11 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
         tmapgps = new TMapGpsManager(Navigation.this);
         tmapgps.setMinTime(1000);
         tmapgps.setMinDistance(5);
-        tmapgps.setProvider(tmapgps.NETWORK_PROVIDER); //연결된 인터넷으로 현 위치를 받습니다.
-        //실내일 때 유용합니다.
-        //tmapgps.setProvider(tmapgps.GPS_PROVIDER); //gps로 현 위치를 잡습니다.
+        //tmapgps.setProvider(tmapgps.NETWORK_PROVIDER); //연결된 인터넷으로 현 위치를 받습니다. -> //실내일 때 유용합니다.
+        tmapgps.setProvider(tmapgps.GPS_PROVIDER); //gps로 현 위치를 잡습니다. -> 야외에서 정확함
         tmapgps.OpenGps();
 
         /*  화면중심을 단말의 현재위치로 이동 */
-        //tMapView.setTrackingMode(true);
         tMapView.setSightVisible(true);
 
         setGps();
@@ -153,21 +145,16 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
         super.onPostCreate(savedInstanceState);
 
         if(gpsinfo.lat == 0)    {
-            //tMapView.setCenterPoint( 35.141783, 126.928387);
             tMapView.setCenterPoint(  126.928387, 35.141783);
         }   else    {
-            //tMapView.setCenterPoint( gpsinfo.lat, gpsinfo.lon);
             tMapView.setCenterPoint( gpsinfo.lon, gpsinfo.lat);
             setTrackingMode();
         }
 
-
         CurrentMarker = new TMapMarkerItem();
-
-        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.poi_here);
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.poi_here); // 현재위치 아이콘
         tMapView.setIcon(bitmap);
         tMapView.addMarkerItem("CurrentMarker", CurrentMarker);
-
         tMapView.setIconVisibility(true);
     }
 
@@ -197,9 +184,7 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
 
         Log.e("Navi", gpsinfo.lat +"/"+ gpsinfo.lon +"--"+set_lat +"/"+set_lon);
 
-        //TMapPoint point1 = new TMapPoint(35.141783, 126.928387);
         TMapPoint point1 = new TMapPoint(now_lat, now_lon);
-        //TMapPoint point2 = new TMapPoint(set_location[set_location_num][0], set_location[set_location_num][1]);
         TMapPoint point2 = new TMapPoint(set_lat, set_lon);
         Log.e("Navi", String.valueOf(set_location_num));
         TMapData tmapdata = new TMapData();
@@ -228,7 +213,6 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
         tMapView.setTMapPathIcon(start, end);
 
         tMapView.zoomToTMapPoint(point1, point2);
-        //tMapView.setZoomLevel(18);
         tMapView.setCenterPoint(now_lat, now_lon);
     }
 
@@ -272,7 +256,6 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
-        //lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 위치제공자(실내에선 NETWORK_PROVIDER 권장)
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, // 등록할 위치제공자(실내에선 NETWORK_PROVIDER 권장)
                 1000, // 통지사이의 최소 시간간격 (miliSecond)
                 1, // 통지사이의 최소 변경거리 (m)
@@ -292,7 +275,7 @@ public class Navigation extends AppCompatActivity implements TMapGpsManager.onLo
     }
 
     public void Search_Status_Car(View view) {
-        search_Car_Btn.setBackgroundColor(Color.parseColor("b9cffd"));
+        search_Car_Btn.setBackgroundColor(Color.parseColor("#b9cffd"));
         search_walk_Btn.setBackgroundColor(Color.parseColor("#d4d5d6"));
         search_Status = false;
         Toast.makeText(getApplicationContext(), "차량 길찾기로 설정되었습니다.", Toast.LENGTH_SHORT).show();

@@ -21,7 +21,7 @@ import android.support.v4.content.ContextCompat;
  */
 
 public class GpsInfo extends Service implements LocationListener {
-
+    // GPS사용유무 확인해서 알림창 띄울려고함
     Navigation navigation = new Navigation();
 
     private Context mContext;

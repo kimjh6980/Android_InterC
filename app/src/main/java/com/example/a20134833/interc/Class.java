@@ -37,9 +37,7 @@ public class Class extends AppCompatActivity {
 
     EditText id;
     EditText pw;
-
     TextView[] dtv; // 0~69
-
     ProgressDialog asyncDialog;
 
     @Override
@@ -47,10 +45,10 @@ public class Class extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
 
-         id = findViewById(R.id.idT);
-         pw = findViewById(R.id.pwT);
+         id = findViewById(R.id.idT);   // ID
+         pw = findViewById(R.id.pwT);   // PW
 
-         dtv = new TextView[70];
+         dtv = new TextView[70];    // Json으로 받아올 수업리스트를 담을 TextView들
 
         for(int i=0;  i<70; i++)   {
             int k = getResources().getIdentifier("detailclass"+i, "id", getPackageName());
@@ -113,9 +111,9 @@ public class Class extends AppCompatActivity {
         public final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
         public int requestPost(String url, String id, String pw) {
-            //Request Body에 서버에 보낼 데이터 작성
+            //Request Body에 서버에 보낼 데이터 작성   // Row로 한큐에 보냄
             final String Sbody = "{\"target\":\"TIMETABLE\",\"method\":\"LOAD\",\"perid\":\"" + id + "\",\"password\":\"" + pw + "\",\"custcd\":\"CHOSUN\",\"year\":2018,\"class\":\"10\"}";
-            final RequestBody requestBody = RequestBody.create(JSON, Sbody);
+            final RequestBody requestBody = RequestBody.create(JSON, Sbody);    //Json 형식으로 전송
             //작성한 Request Body와 데이터를 보낼 url을 Request에 붙임
             Request request = new Request.Builder().url(url).post(requestBody).build();
 
@@ -132,43 +130,50 @@ public class Class extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject(responseBody);
                         Log.e("rsp = ", jsonObject.toString());
                         String msg = jsonObject.getString("message");
-                        if(msg.equals("ERROR")) {
+                        if(msg.equals("ERROR")) {   // 에러 발생시
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Error. Try Again", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Error. Try Again", Toast.LENGTH_LONG).show();  // 토스트 메세지
                                 }
                             });
-                        }   else {
+                        }   else {  // 성공시
 
-                            final String data = jsonObject.getString("data");
-                            //final String Cdata = data.substring(1, data.length()-1);
-                            //Log.e("Cdata = ", Cdata);
+                            final String data = jsonObject.getString("data"); // Data부분만 Array로 뺴옴
                             final JSONArray Jdata = new JSONArray(data);
 
                             for (int i = 0; i < 70; i++) {
-                                JSONObject jsonObj = Jdata.getJSONObject(i);
-                                final String idx = jsonObj.getString("idx");
-                                final String subject = jsonObj.getString("subject");
-                                final String curi_num = jsonObj.getString("curi_num");
-                                final String emp_nm = jsonObj.getString("emp_nm");
-                                final String room_nm = jsonObj.getString("room_nm");
+                                JSONObject jsonObj = Jdata.getJSONObject(i); // Array의 각 한줄씩 jsonObject로 변환
+                                final String subject = jsonObj.getString("subject");    // 과목명
+                                final String curi_num = jsonObj.getString("curi_num");  // 분반
 
-                                if (!subject.isEmpty()) {
+                                if (!subject.isEmpty()) {   // Subject != null -> 수업이 있으면
                                     final String classdata = subject + "\n" + curi_num;
                                     Log.e("Your class is ", classdata);
 
                                     final int finalI = i;
                                     runOnUiThread(new Runnable() {
-                                        public void run() {
+                                        public void run() { // MainThread 밖에서 UI를 건드리기 위해서
                                             Random random = new Random();
                                             int color = 0;
-                                            color = Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+                                            color = Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));   // 텍스트뷰 배경색 랜덤
                                             dtv[finalI].setBackgroundColor(color);
                                             dtv[finalI].setText(classdata);
-                                            if (finalI >= 7) {
-                                                if (dtv[finalI].getText().toString().equals(dtv[finalI - 7].getText().toString())) {
+                                            if (finalI >= 7) {  // 2시간짜리 수업일떄
+                                                if (dtv[finalI].getText().toString().equals(dtv[finalI - 7].getText().toString())) {    // 2시간짜리 수업일떄
                                                     dtv[finalI].setVisibility(View.GONE);
                                                     dtv[finalI - 7].setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 2));
+                                                }
+                                            }
+                                            if (finalI >= 14) {  // 3시간짜리 수업일떄
+                                                if (dtv[finalI].getText().toString().equals(dtv[finalI - 14].getText().toString())) {    // 2시간짜리 수업일떄
+                                                    dtv[finalI].setVisibility(View.GONE);
+                                                    dtv[finalI - 14].setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 3));
+                                                }
+                                            }
+                                            if (finalI >= 21) {  // 4시간짜리 수업일떄
+                                                if (dtv[finalI].getText().toString().equals(dtv[finalI - 21].getText().toString())) {    // 2시간짜리 수업일떄
+                                                    dtv[finalI].setVisibility(View.GONE);
+                                                    dtv[finalI - 21].setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 4));
                                                 }
                                             }
                                         }

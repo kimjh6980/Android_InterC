@@ -255,8 +255,11 @@ public class BusLoaction extends FragmentActivity implements OnMapReadyCallback 
 
     @Override
     public void onBackPressed() {
-        timer.cancel();
-        timer = null;
+        try {
+            timer.cancel();
+            timer = null;
+        }catch (NullPointerException e) {}
+
         super.onBackPressed();
     }
 }

@@ -49,13 +49,10 @@ import okhttp3.Response;
  */
 public class Schedule_Calendar extends AppCompatActivity{
 
-    String time,kcal,menu;
     private final OneDayDecorator oneDayDecorator = new OneDayDecorator();
-    Cursor cursor;
     MaterialCalendarView materialCalendarView;
 
     List<String> array = new ArrayList<String>();
-    //String[] array_result = {"2018/03/18","2018/04/18","2018/05/18","2018/06/18"};
     String[] array_result = {};
 
     ArrayList<String> items;
@@ -89,27 +86,14 @@ public class Schedule_Calendar extends AppCompatActivity{
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
 
-        materialCalendarView.addDecorators(
+        materialCalendarView.addDecorators( // 달력 꾸미기
                 new SundayDecorator(),
                 new SaturdayDecorator(),
                 oneDayDecorator);
 
-        long now = System.currentTimeMillis();
-        Date date = new Date(now);
+        Calendar_receive_Asycn("2018","04");    // 시작하면 초기화면 리스트는 4월자임
 
-        SimpleDateFormat year_Form = new SimpleDateFormat("yyyy", Locale.KOREA);
-        SimpleDateFormat month_Form = new SimpleDateFormat("mm", Locale.KOREA);
-/*
-        String year = String.format("%04d", year_Form.format(date));
-        String month = String.format("%02d", month_Form.format(date));
-        Bus_Location_receive_Asycn(year, month);
-*/
-        //String[] result = {"2017,03,18","2017,04,18","2017,05,18","2017,06,18"};
-
-        Bus_Location_receive_Asycn("2018","04");    // 시작하면 초기화면 리스트는 4월자임
-        //new ApiSimulator(array_result).executeOnExecutor(Executors.newSingleThreadExecutor());
-
-        materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
+        materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {    // 일 바꿀때 뜨는 알람
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
 
@@ -128,17 +112,15 @@ public class Schedule_Calendar extends AppCompatActivity{
             }
         });
 
-        materialCalendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
+        materialCalendarView.setOnMonthChangedListener(new OnMonthChangedListener() {   // 월 바꿀떄
             @Override
             public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
-                //Do something like this
-                //Date date1 = date.getDate();
 
                 String Year = String.format("%04d", date.getYear());
                 String Month = String.format("%02d", date.getMonth() + 1);
                 Log.e("ChangeMonth", Year + "." + Month);
 
-                Bus_Location_receive_Asycn(Year, Month);
+                Calendar_receive_Asycn(Year, Month);
             }
         });
     }
@@ -158,6 +140,7 @@ public class Schedule_Calendar extends AppCompatActivity{
         }
     }
 
+    // 달력 보여주는 이벤트
     private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
 
         String[] Time_Result;
@@ -182,8 +165,7 @@ public class Schedule_Calendar extends AppCompatActivity{
             //string 문자열인 Time_Result 을 받아와서 ,를 기준으로짜르고 string을 int 로 변환
 
             for(int i = 0 ; i < Time_Result.length ; i ++){
-                //String[] time = Time_Result[i].split("/");
-                String[] time = Time_Result[i].split("\\.");
+                String[] time = Time_Result[i].split("\\.");    // 받아온 데이터 날짜 변환
                 Log.e("TimeResult " + i, " = " + time[0] +"/"+time[1]+"/"+time[2]);
                 int year = Integer.parseInt(time[0]);
                 int month = Integer.parseInt(time[1]);
@@ -193,7 +175,7 @@ public class Schedule_Calendar extends AppCompatActivity{
                 calendar.set(year,month-1,dayy);
             }
 
-            // 뒤에 하나가 안떠서 억지로 추가해준거
+            // 뒤에 하나가 안떠서 억지로 추가해준거(왜안뜨는지는 모르겠다 ㅠ)
             CalendarDay day = CalendarDay.from(calendar);
             dates.add(day);
             calendar.set(2018, 01,01);
@@ -217,28 +199,24 @@ public class Schedule_Calendar extends AppCompatActivity{
                 return;
             }
 */
-            materialCalendarView.addDecorator(new EventDecorator(Color.GREEN, calendarDays,Schedule_Calendar.this));
+            materialCalendarView.addDecorator(new EventDecorator(Color.GREEN, calendarDays,Schedule_Calendar.this));    // 오늘
 
-            asyncDialog.dismiss();
+            asyncDialog.dismiss();  // 로딩중입니다 Dialog 끄기
         }
     }
 
     //------------OKHttp -> 일정받아오기
     public final String url = "http://api.udp.cc/libs/getCalendar.php";
-
     OkHttpClient client = new OkHttpClient();
-
     String responseBody = null;
 
-
-
-    public void Bus_Location_receive_Asycn(final String year,final String month) {
-        (new AsyncTask<MainActivity, Void, String>() {
+    public void Calendar_receive_Asycn(final String year,final String month) {
+        (new AsyncTask<Schedule_Calendar, Void, String>() {
             @Override
-            protected String doInBackground(MainActivity... mainActivities) {
+            protected String doInBackground(Schedule_Calendar... mainActivities) {
                 Log.e("Do In Back", "Start");
                 ConnectServer connectServerPost = new ConnectServer();
-                connectServerPost.requestPost(url, year, month);
+                connectServerPost.requestPost(url, year, month);    // 인자값 : year, month
                 return responseBody;
             }
 
@@ -294,15 +272,10 @@ public class Schedule_Calendar extends AppCompatActivity{
                 public void onResponse(Call call, Response response) {
                     try {
                         int EventConut = 1;
-
                         responseBody = response.body().string();
-
                         JSONObject jsonObject = new JSONObject(responseBody);
-
                         Log.e("Response == ", String.valueOf(jsonObject));
-
                         String Data = jsonObject.getString("data");
-
                         JSONArray jsonArr = new JSONArray(Data);
                         String SetMonth = year + "." + month + ".";
                         Log.e("Year+Month = ", SetMonth);
@@ -320,16 +293,6 @@ public class Schedule_Calendar extends AppCompatActivity{
                                 array.add(lat);
                             }
                         }
-                        /*
-                        new Thread() {
-                            public void run() {
-                                Message msg = mhandler.obtainMessage();
-                                mhandler.sendMessage(msg);
-                            }
-                        }.start();
-*/
-//                        ShownowLocation(lat, lon);
-
                         array_result = array.toArray(new String[array.size()]);
                         for(int i=0; i<array_result.length; i++)    {
                             Log.e("Array result " + i, "=" + array_result[i]);
@@ -352,13 +315,11 @@ public class Schedule_Calendar extends AppCompatActivity{
                         }   else    {
                             Toast.makeText(Schedule_Calendar.this, "행사가 없습니다.", Toast.LENGTH_SHORT).show();
                         }
-                        //new ApiSimulator(array_result).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
                     } catch (IOException e) {
                         e.printStackTrace();
 
                     } catch (JSONException e) {
-                        // 로그인이 틀렸을 때,
+                        //Json 예외처리
                         e.printStackTrace();
                     }
                 }

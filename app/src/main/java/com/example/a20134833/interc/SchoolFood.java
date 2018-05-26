@@ -26,7 +26,7 @@ public class SchoolFood extends AppCompatActivity {
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) { //Show VIew
                 view.loadUrl(url);
                 return true;
             }
@@ -34,7 +34,7 @@ public class SchoolFood extends AppCompatActivity {
 
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
-            public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+            public boolean onJsAlert(WebView view, String url, String message, final JsResult result) { // Json Alert Dialog
                 new AlertDialog.Builder(view.getContext())
                         .setTitle("Alert")
                         .setMessage(message)
@@ -51,7 +51,7 @@ public class SchoolFood extends AppCompatActivity {
             }
 
             @Override
-            public boolean onJsConfirm(WebView view, String url, String message,
+            public boolean onJsConfirm(WebView view, String url, String message,    // Json Confirm
                                        final JsResult result) {
                 new AlertDialog.Builder(view.getContext())
                         .setTitle("Confirm")
@@ -79,7 +79,7 @@ public class SchoolFood extends AppCompatActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, KeyEvent event) { // 웹뷰 상에서 뒤로가기 이벤트
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mWebView.canGoBack()) {
                 mWebView.goBack();
