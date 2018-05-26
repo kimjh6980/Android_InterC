@@ -106,7 +106,7 @@ public class Schedule_Calendar extends AppCompatActivity{
 */
         //String[] result = {"2017,03,18","2017,04,18","2017,05,18","2017,06,18"};
 
-        Bus_Location_receive_Asycn("2018","04");
+        Bus_Location_receive_Asycn("2018","04");    // 시작하면 초기화면 리스트는 4월자임
         //new ApiSimulator(array_result).executeOnExecutor(Executors.newSingleThreadExecutor());
 
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {

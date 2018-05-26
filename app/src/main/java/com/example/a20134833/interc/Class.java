@@ -1,5 +1,7 @@
 package com.example.a20134833.interc;
 
+import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -17,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -32,6 +38,10 @@ public class Class extends AppCompatActivity {
     EditText id;
     EditText pw;
 
+    TextView[] dtv; // 0~69
+
+    ProgressDialog asyncDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +49,13 @@ public class Class extends AppCompatActivity {
 
          id = findViewById(R.id.idT);
          pw = findViewById(R.id.pwT);
+
+         dtv = new TextView[70];
+
+        for(int i=0;  i<70; i++)   {
+            int k = getResources().getIdentifier("detailclass"+i, "id", getPackageName());
+            dtv[i] = findViewById(k);
+        }
 
         Button classSearch = findViewById(R.id.classSearch);
 
@@ -49,9 +66,12 @@ public class Class extends AppCompatActivity {
                 Log.e("class = ", id.getText().toString() + "/" + pw.getText().toString());
             }
         });
+
+
+        asyncDialog = new ProgressDialog(Class.this);
+
+
     }
-
-
 
     //--------------------Server Conn
     public final String url = "http://api.udp.cc/libs/query.php";
@@ -72,11 +92,16 @@ public class Class extends AppCompatActivity {
 
             @Override
             protected void onPreExecute() {
+
+                asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                asyncDialog.setMessage("로딩중입니다..");
+                asyncDialog.show();
                 super.onPreExecute();
             }
 
             @Override
             protected void onPostExecute(String result) {
+
             }
         }).execute();
 
@@ -106,23 +131,53 @@ public class Class extends AppCompatActivity {
                         responseBody = response.body().string();
                         JSONObject jsonObject = new JSONObject(responseBody);
                         Log.e("rsp = ", jsonObject.toString());
-                        final String data = jsonObject.getString("data");
-                        final String Cdata = data.substring(1, data.length()-1);
-                        final JSONArray Jdata = new JSONArray(Cdata);
+                        String msg = jsonObject.getString("message");
+                        if(msg.equals("ERROR")) {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), "Error. Try Again", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }   else {
 
-                        for(int i=0; i<70; i++) {
-                            JSONObject jsonObj = Jdata.getJSONObject(i);
-                            final String idx = jsonObj.getString("idx");
-                            final String subject = jsonObj.getString("subject");
-                            final String curi_num = jsonObj.getString("curi_num");
-                            final String emp_nm = jsonObj.getString("emp_nm");
-                            final String room_nm = jsonObj.getString("room_nm");
+                            final String data = jsonObject.getString("data");
+                            //final String Cdata = data.substring(1, data.length()-1);
+                            //Log.e("Cdata = ", Cdata);
+                            final JSONArray Jdata = new JSONArray(data);
 
-                            if(subject != "")   {
-                                Log.e("Your class is " , idx + "/" + subject+ "/" +curi_num+ "/" +emp_nm+ "/" +room_nm);
+                            for (int i = 0; i < 70; i++) {
+                                JSONObject jsonObj = Jdata.getJSONObject(i);
+                                final String idx = jsonObj.getString("idx");
+                                final String subject = jsonObj.getString("subject");
+                                final String curi_num = jsonObj.getString("curi_num");
+                                final String emp_nm = jsonObj.getString("emp_nm");
+                                final String room_nm = jsonObj.getString("room_nm");
+
+                                if (!subject.isEmpty()) {
+                                    final String classdata = subject + "\n" + curi_num;
+                                    Log.e("Your class is ", classdata);
+
+                                    final int finalI = i;
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            Random random = new Random();
+                                            int color = 0;
+                                            color = Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+                                            dtv[finalI].setBackgroundColor(color);
+                                            dtv[finalI].setText(classdata);
+                                            if (finalI >= 7) {
+                                                if (dtv[finalI].getText().toString().equals(dtv[finalI - 7].getText().toString())) {
+                                                    dtv[finalI].setVisibility(View.GONE);
+                                                    dtv[finalI - 7].setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 2));
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+
                             }
-
                         }
+                        asyncDialog.dismiss();
 
                     } catch (IOException e) {
                         e.printStackTrace();
