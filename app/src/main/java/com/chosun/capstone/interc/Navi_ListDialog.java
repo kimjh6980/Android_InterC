@@ -1,19 +1,14 @@
-package com.example.a20134833.interc;
+package com.chosun.capstone.interc;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class Navi_ListDialog {  // 네비게이션에서 단과대 선택하는 다이얼로그
 

@@ -1,4 +1,4 @@
-package com.example.a20134833.interc;
+package com.chosun.capstone.interc;
 
 import org.junit.Test;
 

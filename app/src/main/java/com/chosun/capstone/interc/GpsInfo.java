@@ -1,4 +1,4 @@
-package com.example.a20134833.interc;
+package com.chosun.capstone.interc;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;

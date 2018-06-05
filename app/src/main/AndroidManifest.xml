@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.a20134833.interc">
+    package="com.chosun.capstone.interc">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,7 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.chosun.capstone.interc.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,19 +45,19 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".BusLoaction"
+            android:name="com.chosun.capstone.interc.BusLoaction"
             android:label="@string/title_activity_bus_loaction" />
         <activity
-            android:name=".SchoolFood"
+            android:name="com.chosun.capstone.interc.SchoolFood"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity
-            android:name=".ClcWeb"
+            android:name="com.chosun.capstone.interc.ClcWeb"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <activity android:name=".Schedule_Calendar" />
-        <activity android:name=".Navigation" />
+        <activity android:name="com.chosun.capstone.interc.Schedule_Calendar" />
+        <activity android:name="com.chosun.capstone.interc.Navigation" />
         <activity android:name=".Navi_List_Dialog" />
-        <activity android:name=".Navi_ListDialog" />
-        <activity android:name=".Class"></activity>
+        <activity android:name="com.chosun.capstone.interc.Navi_ListDialog" />
+        <activity android:name="com.chosun.capstone.interc.Class"></activity>
     </application>
 
 </manifest>

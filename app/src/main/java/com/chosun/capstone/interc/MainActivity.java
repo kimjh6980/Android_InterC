@@ -1,4 +1,4 @@
-package com.example.a20134833.interc;
+package com.chosun.capstone.interc;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

@@ -1,7 +1,6 @@
-package com.example.a20134833.interc;
+package com.chosun.capstone.interc;
 
 import android.app.ProgressDialog;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -12,10 +11,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.a20134833.interc.decorators.EventDecorator;
-import com.example.a20134833.interc.decorators.OneDayDecorator;
-import com.example.a20134833.interc.decorators.SaturdayDecorator;
-import com.example.a20134833.interc.decorators.SundayDecorator;
+import com.chosun.capstone.interc.decorators.EventDecorator;
+import com.chosun.capstone.interc.decorators.OneDayDecorator;
+import com.chosun.capstone.interc.decorators.SaturdayDecorator;
+import com.chosun.capstone.interc.decorators.SundayDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -27,12 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.Executors;
 
 import okhttp3.Call;
@@ -91,7 +86,7 @@ public class Schedule_Calendar extends AppCompatActivity{
                 new SaturdayDecorator(),
                 oneDayDecorator);
 
-        Calendar_receive_Asycn("2018","04");    // 시작하면 초기화면 리스트는 4월자임
+        Calendar_receive_Asycn("2018","06");    // 시작하면 초기화면 리스트는 6월자임
 
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {    // 일 바꿀때 뜨는 알람
             @Override
