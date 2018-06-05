@@ -1,17 +1,16 @@
-package com.example.a20134833.interc.decorators;
+package com.chosun.capstone.interc.decorators;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import com.example.a20134833.interc.R;
+import com.chosun.capstone.interc.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
-import java.time.Month;
 import java.util.Collection;
 import java.util.HashSet;
 

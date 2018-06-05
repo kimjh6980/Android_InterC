@@ -1,4 +1,4 @@
-package com.example.a20134833.interc.decorators;
+package com.chosun.capstone.interc.decorators;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
